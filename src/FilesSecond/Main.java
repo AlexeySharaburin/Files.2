@@ -38,28 +38,30 @@ public class Main {
         checkFile(save3, "save3.dat");
         saveGame(game3, "/Users/alexey/Desktop/Games/GameRunner/savegames/save3.dat");
         listStringsNames.add("/Users/alexey/Desktop/Games/GameRunner/savegames/save3.dat");
+//
+//        zipFiles(listStringsNames, "/Users/alexey/Desktop/Games/GameRunner/savegames/zip.zip");
 
-        zipFiles(listStringsNames, "/Users/alexey/Desktop/Games/GameRunner/savegames/zip.zip");
+        zipFiles1(dirSavegames, "/Users/alexey/Desktop/Games/GameRunner/savegames/zip.zip");
 
-        cleanDir(dirSavegames);
+//        cleanDir(dirSavegames);
 
     }
 
-        public static void zipFiles(List<String> listStrings, String pathZip) throws FileNotFoundException {
+    public static void zipFiles(List<String> listStrings, String pathZip) throws FileNotFoundException {
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(pathZip))) {
             int i = 1;
             for (String string : listStrings) {
-                    try (FileInputStream fis = new FileInputStream(string)) {
-                        ZipEntry entry = new ZipEntry("/Users/alexey/Desktop/Games/GameRunner/savegames/package_save_" + i + ".dat");
-                        zout.putNextEntry(entry);
-                        byte[] info = new byte[fis.available()];
-                        fis.read(info);
-                        zout.write(info);
-                        zout.closeEntry();
-                        i++;
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
+                try (FileInputStream fis = new FileInputStream(string)) {
+                    ZipEntry entry = new ZipEntry("/Users/alexey/Desktop/Games/GameRunner/savegames/package_save_" + i + ".dat");
+                    zout.putNextEntry(entry);
+                    byte[] info = new byte[fis.available()];
+                    fis.read(info);
+                    zout.write(info);
+                    zout.closeEntry();
+                    i++;
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -89,7 +91,7 @@ public class Main {
     public static void saveGame(GameProgress gameProgress, String path) {
         try (FileOutputStream fos = new FileOutputStream(path);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(gameProgress.toString());
+            oos.writeObject(gameProgress);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -102,6 +104,33 @@ public class Main {
             }
         }
         System.out.println("Файлы, не лежашие в архиве, успешно удалены.");
+    }
+
+
+    public static void zipFiles1(File dir, String pathZip) throws FileNotFoundException {
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(pathZip))) {
+            int i = 1;
+            for (File file : dir.listFiles()) {
+                try (FileInputStream fis = new FileInputStream(file.getName())) {
+                    ZipEntry entry = new ZipEntry("/Users/alexey/Desktop/Games/GameRunner/savegames/package_save_" + i + ".dat");
+                    System.out.println(file.getName());
+                    zout.putNextEntry(entry);
+                    byte[] info = new byte[fis.available()];
+                    fis.read(info);
+                    zout.write(info);
+                    zout.closeEntry();
+                    i++;
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Файлы успешно заархивированы.");
     }
 
 }
